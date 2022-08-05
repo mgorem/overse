@@ -1,23 +1,47 @@
+import { expect } from "chai";
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
+let owner, Alice, Bob, Joe;
 
-async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+describe("Apartment", function () {
 
-  const lockedAmount = ethers.utils.parseEther("1");
 
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  it("Contract creator should have 100 shares of apartament",async () => {
+    const Apartment = await ethers.getContractFactory("Apartment");
+    const apartment = await Apartment.deploy();
 
-  await lock.deployed();
+    [owner, Alice, Bob, Joe] = await ethers.getSigners();
 
-  console.log("Lock with 1 ETH deployed to:", lock.address);
-}
+    await apartment.deployed();
+    let ownerBalance = await apartment.balanceOf(owner.address);
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
+    expect(ownerBalance).to.equal(100);
+
+  })
 });
+
+
+
+// import { ethers } from "hardhat";
+
+// async function main() {
+//   const currentTimestampInSeconds = Math.round(Date.now() / 1000);
+//   const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
+//   const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+
+//   const lockedAmount = ethers.utils.parseEther("1");
+
+//   const Lock = await ethers.getContractFactory("Lock");
+//   const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+
+//   await lock.deployed();
+
+//   console.log("Lock with 1 ETH deployed to:", lock.address);
+// }
+
+// // We recommend this pattern to be able to use async/await everywhere
+// // and properly handle errors.
+// main().catch((error) => {
+//   console.error(error);
+//   process.exitCode = 1;
+// });
